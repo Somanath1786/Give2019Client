@@ -9,13 +9,10 @@ const divStyle = {
     width : '100%'
 }
 const leftAlign = {
-    width :'25%',
-    borderStyle : 'solid'
-
+    width :'25%'
 }
 const rightAlign = {
-    width : '75%',
-    borderStyle : 'solid'
+    width : '75%'
 }
 
 export default class Homepage extends React.Component {
