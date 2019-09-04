@@ -2,6 +2,9 @@ import React from 'react'
 import Header from './shared/Header';
 import FilterEvents from './filter/filter';
 import GiveCalendar from './calendar/calender';
+import { connect } from 'react-redux'
+import * as events from '../api/events'
+import {updateEvents} from '../components/store/store'
 
 const divStyle = {
     display : 'flex',
@@ -15,7 +18,15 @@ const rightAlign = {
     width : '75%'
 }
 
-export default class Homepage extends React.Component {
+class Homepage extends React.Component {
+
+    async componentDidMount()
+    {
+        const allEvents = await events.getEvents()
+        this.props.dispatch(updateEvents(allEvents.response))
+
+    }
+
     render() {
         return(
             <div>
@@ -32,3 +43,15 @@ export default class Homepage extends React.Component {
         )
     }
 }
+
+// Connect the redux store to react
+function mapStateToProps(state) {
+    return {
+      events : state.events
+    };
+}
+
+export default connect(
+mapStateToProps,
+null
+)(Homepage);

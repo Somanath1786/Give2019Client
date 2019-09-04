@@ -6,52 +6,10 @@ import { Calendar , momentLocalizer } from 'react-big-calendar'
 
 import moment from 'moment'
 import Modal from '@material-ui/core/Modal';
+import { connect } from 'react-redux'
 
 
 const localizer = momentLocalizer(moment)
-
-const events = [
-    {
-        'title' : 'Test 1',
-        'start' : new Date(2019, 9, 4, 12, 0, 0),
-        'end' : new Date(2019, 9, 4, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 2',
-        'start' : new Date(2019, 9, 5, 12, 0, 0),
-        'end' : new Date(2019, 9, 5, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 3',
-        'start' : new Date(2019, 9, 6, 12, 0, 0),
-        'end' : new Date(2019, 9, 6, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 3a',
-        'start' : new Date(2019, 9, 6, 12, 0, 0),
-        'end' : new Date(2019, 9, 6, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 3b',
-        'start' : new Date(2019, 9, 6, 12, 0, 0),
-        'end' : new Date(2019, 9, 6, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 3c',
-        'start' : new Date(2019, 9, 6, 12, 0, 0),
-        'end' : new Date(2019, 9, 6, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 3d',
-        'start' : new Date(2019, 9, 6, 12, 0, 0),
-        'end' : new Date(2019, 9, 6, 13, 0, 0)
-    },
-    {
-        'title' : 'Test 3e',
-        'start' : new Date(2019, 9, 6, 12, 0, 0),
-        'end' : new Date(2019, 9, 6, 13, 0, 0)
-    }
-]
 
 const calStyle = {
     height : '750px'
@@ -65,19 +23,17 @@ const modalStyle = {
 
 const modalDivStyle = {
     width : '500px',
-    height : '600px',
+    height : '300px',
     backgroundColor : 'white'
 }
 
 const modalHeaderStyle ={
-    display : 'flex',
-    alignItems : 'center',
-    justifyContent : 'center',
+    marginLeft : '10px'
 }
 
 // TODO: For this to work it is super important that the css is overridden, figure out a way to do so before deploying
 // I think the fix I have now should work. Let's see
-export default class GiveCalendar extends React.Component {
+class GiveCalendar extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -106,22 +62,57 @@ export default class GiveCalendar extends React.Component {
     render() {
 
         return(
-            <div class= {styleFix.rbcEvent}>
+            <div className= {styleFix.rbcEvent}>
                 <Calendar
                     style={calStyle}
                     popup
                     localizer={localizer}
                     views={{month:true, week : true, day : true}}
-                    events={events}
+                    events={this.props.events}
                     defaultDate={new Date(2019, 9, 1)}
                     onSelectEvent={this.displayModal}
+                    startAccessor= "start"
+                    endAccessor ="end"
                 />
                 <Modal open={this.state.showModal} onClose={this.hideModal} style={modalStyle}>
                     <div style={modalDivStyle}>
+                        <div>
                         <h2 style= {modalHeaderStyle}>{this.state.selectedEvent.title}</h2>
+                        </div>
+
+                        <div>
+                            <p style={modalHeaderStyle}>
+                                <strong>Start Time : </strong> {new Intl.DateTimeFormat('en-US', {year : 'numeric', month : '2-digit', day : '2-digit', hour : '2-digit', minute : '2-digit'}).format(this.state.selectedEvent.start)}
+                                <br />
+                                <strong>End Time : </strong> {new Intl.DateTimeFormat('en-US', {year : 'numeric', month : '2-digit', day : '2-digit', hour : '2-digit', minute : '2-digit'}).format(this.state.selectedEvent.end)}
+                                <br />
+                                <br />
+                                <strong>Contact : </strong> {this.state.selectedEvent.contact}
+                                <br/>
+                                <br />
+                                <strong>Location : </strong> Building {this.state.selectedEvent.building} , {this.state.selectedEvent.city} {this.state.selectedEvent.state}
+                            </p>
+                        </div>
+
+                        <div>
+                            <button style={modalHeaderStyle}>Edit Event</button>
+                            <button style={modalHeaderStyle}> Delete Event</button>
+
+                        </div>
                     </div>
                 </Modal>
             </div>
         )
     }
 }
+// Connect the redux store to react
+function mapStateToProps(state) {
+    return {
+      events : state.events
+    };
+}
+
+export default connect(
+mapStateToProps,
+null
+)(GiveCalendar);

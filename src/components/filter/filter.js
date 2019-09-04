@@ -1,4 +1,7 @@
 import React from 'react'
+import * as events from '../../api/events'
+import {updateEvents} from '../../components/store/store'
+import { connect } from 'react-redux'
 
 const divStyle = {
     display : 'flex',
@@ -19,7 +22,7 @@ const rightAlign = {
     marginRight : '5px'
 }
 
-export default class FilterEvents extends React.Component {
+class FilterEvents extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -40,9 +43,87 @@ export default class FilterEvents extends React.Component {
         this.setState({[name] : value})
     }
 
-    handleSubmit (e) {
+    async handleSubmit (e) {
         e.preventDefault()
-        console.log(this.state)
+        var query;
+
+        // TODO: Instead of checking individually for each item in a state
+        // iterate over the same
+
+        if (this.state.event_type !== '')
+        {
+            if (query === undefined)
+            {
+                query = `event_type=${this.state.event_type}`
+            }
+            else
+            {
+                query = query + `&&event_type=${this.state.event_type}`
+            }
+        }
+
+        if (this.state.building !== '')
+        {
+            if (query === undefined)
+            {
+                query = `building=${this.state.building}`
+            }
+            else
+            {
+                query = query + `&&building=${this.state.building}`
+            }
+        }
+
+        if (this.state.city !== '')
+        {
+            if (query === undefined)
+            {
+                query = `city=${this.state.city}`
+            }
+            else
+            {
+                query = query + `&&city=${this.state.city}`
+            }
+        }
+
+        if (this.state.state !== '')
+        {
+            if (query === undefined)
+            {
+                query = `state=${this.state.state}`
+            }
+            else
+            {
+                query = query + `&&state=${this.state.state}`
+            }
+        }
+
+        if (this.state.slt_leader !== '')
+        {
+            if (query === undefined)
+            {
+                query = `slt_leader=${this.state.slt_leader}`
+            }
+            else
+            {
+                query = query + `&&slt_leader=${this.state.slt_leader}`
+            }
+        }
+
+        if (this.state.leader !== '')
+        {
+            if (query === undefined)
+            {
+                query = `leader=${this.state.leader}`
+            }
+            else
+            {
+                query = query + `&&leader=${this.state.leader}`
+            }
+        }
+
+        const filteredEvents = await events.getEvents(query)
+        this.props.dispatch(updateEvents(filteredEvents.response))
     }
 
     clearFilter ()
@@ -73,7 +154,7 @@ export default class FilterEvents extends React.Component {
                             value={this.state.event_type}
                             style={rightAlign}
                         >
-                            <option selected value=''></option>
+                            <option value=''></option>
                             <option>FundRaising</option>
                             <option>MicroVolunteering</option>
                         </select>
@@ -128,15 +209,31 @@ export default class FilterEvents extends React.Component {
 
                         <div style={divStyle}>
                         <label htmlFor='eventType' style={leftAlign}>SLT Leader :  </label>
-                        <input
+                        <select
                             className='form-control'
                             id='slt_leader'
                             onChange={this.handleChange}
                             name='slt_leader'
-                            type='text'
                             value={this.state.slt_leader}
                             style={rightAlign}
-                        />
+                        >
+                            <option value=''></option>
+                            <option>Amy Hood</option>
+                            <option>Brad Smith</option>
+                            <option>Chris Caposela</option>
+                            <option>Harry Shum</option>
+                            <option>Jean-Philippe-Courtis</option>
+                            <option>Judson Aithoff</option>
+                            <option>Kathleen Hogan</option>
+                            <option>Kevin Scott</option>
+                            <option>Kurt DelBene</option>
+                            <option>Non SLT Aligned</option>
+                            <option>Peggy Johnson</option>
+                            <option>Phil Spencer</option>
+                            <option>Rajesh Jha</option>
+                            <option>Scott Guthrie</option>
+                        </select>
+
                         </div>
 
                         <br / >
@@ -168,3 +265,15 @@ export default class FilterEvents extends React.Component {
         )
     }
 }
+
+// Connect the redux store to react
+function mapStateToProps(state) {
+    return {
+      events : state.events
+    };
+}
+
+export default connect(
+mapStateToProps,
+null
+)(FilterEvents);
