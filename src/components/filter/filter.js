@@ -31,7 +31,7 @@ class FilterEvents extends React.Component {
             city : '',
             state : '',
             slt_leader : '',
-            leader : '',
+            exec_sponsor : '',
         }
 
         this.handleChange = this.handleChange.bind(this)
@@ -110,15 +110,15 @@ class FilterEvents extends React.Component {
             }
         }
 
-        if (this.state.leader !== '')
+        if (this.state.exec_sponsor !== '')
         {
             if (query === undefined)
             {
-                query = `leader=${this.state.leader}`
+                query = `exec_sponsor=${this.state.exec_sponsor}`
             }
             else
             {
-                query = query + `&&leader=${this.state.leader}`
+                query = query + `&&exec_sponsor=${this.state.exec_sponsor}`
             }
         }
 
@@ -134,7 +134,7 @@ class FilterEvents extends React.Component {
             city : '',
             state : '',
             slt_leader : '',
-            leader : '',
+            exec_sponsor : '',
         })
     }
 
@@ -155,8 +155,8 @@ class FilterEvents extends React.Component {
                             style={rightAlign}
                         >
                             <option value=''></option>
-                            <option>FundRaising</option>
-                            <option>MicroVolunteering</option>
+                            <option>Fundraising</option>
+                            <option>Micro-volunteering</option>
                         </select>
                         </div>
 
@@ -239,14 +239,14 @@ class FilterEvents extends React.Component {
                         <br / >
 
                         <div style={divStyle}>
-                        <label htmlFor='eventType' style={leftAlign}>Leader :  </label>
+                        <label htmlFor='eventType' style={leftAlign}>Exec_Sponsor :  </label>
                         <input
                             className='form-control'
-                            id='leader'
+                            id='exec_sponsor'
                             onChange={this.handleChange}
-                            name='leader'
+                            name='exec_sponsor'
                             type='text'
-                            value={this.state.leader}
+                            value={this.state.exec_sponsor}
                             style={rightAlign}
                         />
                         </div>

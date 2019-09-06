@@ -22,8 +22,8 @@ const modalStyle = {
 }
 
 const modalDivStyle = {
-    width : '500px',
-    height : '300px',
+    width : '550px',
+    height : '500px',
     backgroundColor : 'white'
 }
 
@@ -42,21 +42,26 @@ class GiveCalendar extends React.Component {
         }
     }
 
-    toggleModal = event => {
-        console.log(event)
-        if(!this.state.showModal) {
-            this.setState({
-                showModal : !this.state.showModal
-            })
-        }
-    }
-
     displayModal = event => {
         this.setState({showModal : true, selectedEvent : event})
     }
 
     hideModal = event => {
         this.setState({showModal : false, selectedEvent : ''})
+    }
+
+    colorEvent = event => {
+        var backgroundColor
+        if(event.event_type === 'Fundraising')
+        {
+            backgroundColor = 'green'
+        }
+        var style = {
+            backgroundColor: backgroundColor,
+        };
+        return {
+            style: style
+        };
     }
 
     render() {
@@ -71,6 +76,7 @@ class GiveCalendar extends React.Component {
                     events={this.props.events}
                     defaultDate={new Date(2019, 9, 1)}
                     onSelectEvent={this.displayModal}
+                    eventPropGetter={(this.colorEvent)}
                     startAccessor= "start"
                     endAccessor ="end"
                 />
@@ -86,18 +92,30 @@ class GiveCalendar extends React.Component {
                                 <br />
                                 <strong>End Time : </strong> {new Intl.DateTimeFormat('en-US', {year : 'numeric', month : '2-digit', day : '2-digit', hour : '2-digit', minute : '2-digit'}).format(this.state.selectedEvent.end)}
                                 <br />
+                                <strong>Location : </strong> Building {this.state.selectedEvent.building} , {this.state.selectedEvent.room}  {this.state.selectedEvent.city} {this.state.selectedEvent.state}
+                                <br />
                                 <br />
                                 <strong>Contact : </strong> {this.state.selectedEvent.contact}
                                 <br/>
+                                <strong>SLT Leader : </strong> {this.state.selectedEvent.slt_leader}
+                                <br/>
+                                <strong>Exec Sponsor : </strong> {this.state.selectedEvent.exec_sponsor}
+                                <br/>
                                 <br />
-                                <strong>Location : </strong> Building {this.state.selectedEvent.building} , {this.state.selectedEvent.city} {this.state.selectedEvent.state}
+                                <strong>Event Type : </strong> {this.state.selectedEvent.event_type}
+                                <br />
+                                <strong>Event URL : </strong> {this.state.selectedEvent.event_url}
+                                <br/>
+                                <br />
+                                <strong>Comments : </strong> {this.state.selectedEvent.comments}
+
                             </p>
                         </div>
 
                         <div>
                             <button style={modalHeaderStyle}>Edit Event</button>
                             <button style={modalHeaderStyle}> Delete Event</button>
-
+                            <button style={modalHeaderStyle} onClick={this.hideModal}> Close</button>
                         </div>
                     </div>
                 </Modal>
