@@ -1,8 +1,9 @@
+import { async } from "q"
+
 const { REACT_APP_API_DOMAIN } = process.env
 const BASE_URL = REACT_APP_API_DOMAIN
 
 export const getEvents = async (queryParams) => {
-    console.log(BASE_URL)
     var url
     if(queryParams === undefined)
     {
@@ -13,13 +14,36 @@ export const getEvents = async (queryParams) => {
         url = `${BASE_URL}?${queryParams}`
     }
 
-    console.log(queryParams, url)
-
     const response = await fetch(url , {
         headers : {
             'Content-Type': 'application/json'
         },
         method: 'GET'
+    })
+
+    const json = await response.json()
+    return json
+}
+
+export const newEvent = async(body) => {
+    const response = await fetch(`${BASE_URL}/newEvent`, {
+        body : JSON.stringify(body),
+        headers : {
+            'Content-Type': 'application/json'
+        },
+        method: 'POST'
+    })
+
+    const json = await response.json()
+    return json
+}
+
+export const deleteEvent = async(eventId) => {
+    const response = await fetch(`${BASE_URL}/${eventId}`, {
+        headers : {
+            'Content-Type': 'application/json'
+        },
+        method: 'DELETE'
     })
 
     const json = await response.json()

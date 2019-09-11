@@ -5,6 +5,9 @@ import GiveCalendar from './calendar/calender';
 import { connect } from 'react-redux'
 import * as events from '../api/events'
 import {updateEvents} from '../components/store/store'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
+import Navigation from './shared/Navigation';
+import NewEvent from './event/newEvent';
 
 const divStyle = {
     display : 'flex',
@@ -29,17 +32,33 @@ class Homepage extends React.Component {
 
     render() {
         return(
-            <div>
-               <Header />
-               <div style = {divStyle}>
-                   <div style={leftAlign}>
-                   <FilterEvents />
-                   </div>
-                   <div style={rightAlign}>
-                   <GiveCalendar />
-                   </div>
-               </div>
-            </div>
+            <Router>
+                <div>
+                <Header />
+                <Navigation/>
+                <Switch>
+                    <Route path='/calendar' exact component = {() => {
+                        return (
+                            <div style = {divStyle}>
+                                <div style={leftAlign}>
+                                <FilterEvents />
+                                </div>
+                                <div style={rightAlign}>
+                                <GiveCalendar />
+                                </div>
+                            </div>
+                        )
+                    }}/>
+
+                    <Route path='/newEvent' exact component = {() => {
+                        return (
+                           <NewEvent />
+                        )
+                    }}/>
+                    <Redirect to='/calendar' />
+                </Switch>
+                </div>
+            </Router>
         )
     }
 }

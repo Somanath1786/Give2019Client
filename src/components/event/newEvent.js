@@ -1,13 +1,19 @@
 import React from 'react'
-import * as events from '../../api/events'
-import {updateEvents} from '../../components/store/store'
-import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import * as event from '../../api/events'
+
+const formStyle = {
+    textAlign : 'center',
+    width : '500px',
+    height : '800px'
+}
 
 const divStyle = {
     display : 'flex',
     flexDirection : 'row',
     width : '100%'
 }
+
 const leftAlign = {
     width :'30%',
     marginTop : '5px',
@@ -22,23 +28,51 @@ const rightAlign = {
     marginRight : '5px'
 }
 
-//TODO: On clicking Filter the state is reset in the UI - Fix it
+const rightAlignWihDateTime = {
+    display : 'flex',
+    flexDirection : 'row',
+    width : '70%',
+    marginTop : '5px',
+    marginBottom : '5px',
+    marginRight : '5px'
+}
 
-class FilterEvents extends React.Component {
-    constructor(props) {
+const rightAlignComment = {
+    width : '70%',
+    height : '100px',
+    marginTop : '5px',
+    marginBottom : '5px',
+    marginRight : '5px'
+}
+
+const buttonStyle = {
+    marginLeft : '20px'
+}
+
+class NewEvent extends React.Component{
+    constructor(props){
         super(props)
         this.state = {
-            event_type : '',
+            title : '',
+            contact : '',
+            start_date : '',
+            start_time : '',
+            end_date : '',
+            end_time : '',
             building : '',
+            room : '',
             city : '',
             state : '',
+            event_type : '',
             slt_leader : '',
             exec_sponsor : '',
+            event_url : '',
+            comments : ''
         }
 
         this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
-        this.clearFilter = this.clearFilter.bind(this)
+        this.clearForm = this.clearForm.bind(this)
     }
 
     handleChange({target : { name, value }}) {
@@ -47,61 +81,109 @@ class FilterEvents extends React.Component {
 
     async handleSubmit (e) {
         e.preventDefault()
-        var query;
-
-        Object.entries(this.state).forEach(([key, value]) =>{
-            if(value !== '')
-            {
-                if (query === undefined)
-                {
-                    query = `${key}=${value}`
-                }
-                else
-                {
-                    query = query + `&&${key}=${value}`
-                }
-            }
-        })
-
-        const filteredEvents = await events.getEvents(query)
-        this.props.dispatch(updateEvents(filteredEvents.response))
+        await event.newEvent(this.state)
+        this.props.history.push('/calendar')
     }
 
-    clearFilter (e) {
+    // TODO: Clear form is acting as submit and propping the required field - FIX this
+    clearForm (e) {
+        e.preventDefault()
         this.setState({
-            event_type : '',
+            title : '',
+            contact : '',
+            start_date : '',
+            start_time : '',
+            end_date : '',
+            end_time : '',
             building : '',
+            room : '',
             city : '',
             state : '',
+            event_type : '',
             slt_leader : '',
             exec_sponsor : '',
+            event_url : '',
+            comments : ''
         })
+
     }
 
     render() {
         return(
-            <div>
-                <form onSubmit={this.handleSubmit} >
-                    <h2> Filter Events</h2>
-                    <div>
+            <div style={formStyle}>
+               <form onSubmit={this.handleSubmit}>
+                   <h2> Create New Event </h2>
+                   <div>
+                       {/* Title */}
                         <div style={divStyle}>
-                        <label htmlFor='eventType' style = {leftAlign}>Event Type : </label>
-                        <select
+                            <label htmlFor='eventType' style = {leftAlign}>Title : </label>
+                            <input
                             className='form-control'
-                            id='event_type'
+                            id='title'
                             onChange={this.handleChange}
-                            name='event_type'
-                            value={this.state.event_type}
+                            name='title'
+                            type='text'
+                            value={this.state.title}
                             style={rightAlign}
-                        >
-                            <option value=''></option>
-                            <option>Fundraising</option>
-                            <option>Micro-volunteering</option>
-                        </select>
+                            required
+                        />
                         </div>
 
-                        <br / >
+                        {/* Start Date */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style = {leftAlign}>Start : </label>
+                            <div  style={rightAlignWihDateTime}>
+                                <input
+                                    className='form-control'
+                                    id='start_date'
+                                    onChange={this.handleChange}
+                                    name='start_date'
+                                    type='date'
+                                    value={this.state.start_date}
+                                    style={{width:'50%'}}
+                                    required
+                                />
+                                <input
+                                    className='form-control'
+                                    id='start_time'
+                                    onChange={this.handleChange}
+                                    name='start_time'
+                                    type='time'
+                                    value={this.state.start_time}
+                                    style={{width:'50%'}}
+                                    required
+                                />
+                            </div>
+                        </div>
 
+                        {/* End Time */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style = {leftAlign}>End : </label>
+                            <div style={rightAlignWihDateTime}>
+                                <input
+                                    className='form-control'
+                                    id='end_date'
+                                    onChange={this.handleChange}
+                                    name='end_date'
+                                    type='date'
+                                    value={this.state.end_date}
+                                    style={{width:'50%'}}
+                                    required
+                                />
+                                <input
+                                    className='form-control'
+                                    id='end_time'
+                                    onChange={this.handleChange}
+                                    name='end_time'
+                                    type='time'
+                                    value={this.state.end_time}
+                                    style={{width:'50%'}}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Building */}
                         <div style={divStyle}>
                         <label htmlFor='eventType' style={leftAlign}>Building :  </label>
                         <select
@@ -358,12 +440,25 @@ class FilterEvents extends React.Component {
                         </select>
 
                         </div>
-
-                        <br / >
-
+                        {/* Room */}
                         <div style={divStyle}>
-                        <label htmlFor='eventType' style={leftAlign}>City :  </label>
-                        <input
+                            <label htmlFor='eventType' style = {leftAlign}>Room : </label>
+                            <input
+                            className='form-control'
+                            id='room'
+                            onChange={this.handleChange}
+                            name='room'
+                            type='text'
+                            value={this.state.room}
+                            style={rightAlign}
+                            required
+                        />
+                        </div>
+
+                        {/* City */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style = {leftAlign}>City : </label>
+                            <input
                             className='form-control'
                             id='city'
                             onChange={this.handleChange}
@@ -371,13 +466,13 @@ class FilterEvents extends React.Component {
                             type='text'
                             value={this.state.city}
                             style={rightAlign}
+                            required
                         />
                         </div>
 
-                        <br / >
-
+                        {/* State */}
                         <div style={divStyle}>
-                            <label htmlFor='eventType' style={leftAlign}>State :  </label>
+                        <label htmlFor='eventType' style={leftAlign}>State :  </label>
                             <select
                                 className='form-control'
                                 id='state'
@@ -441,42 +536,73 @@ class FilterEvents extends React.Component {
                             </select>
                         </div>
 
-                        <br / >
-
+                        {/* Contact */}
                         <div style={divStyle}>
-                        <label htmlFor='eventType' style={leftAlign}>SLT Leader :  </label>
-                        <select
+                            <label htmlFor='eventType' style = {leftAlign}>Contact : </label>
+                            <input
                             className='form-control'
-                            id='slt_leader'
+                            id='contact'
                             onChange={this.handleChange}
-                            name='slt_leader'
-                            value={this.state.slt_leader}
+                            name='contact'
+                            type='text'
+                            value={this.state.contact}
                             style={rightAlign}
-                        >
-                            <option></option>
-                            <option>Amy Hood</option>
-                            <option>Brad Smith</option>
-                            <option>Chris Caposela</option>
-                            <option>Harry Shum</option>
-                            <option>Jean-Philippe-Courtis</option>
-                            <option>Judson Aithoff</option>
-                            <option>Kathleen Hogan</option>
-                            <option>Kevin Scott</option>
-                            <option>Kurt DelBene</option>
-                            <option>Non SLT Aligned</option>
-                            <option>Peggy Johnson</option>
-                            <option>Phil Spencer</option>
-                            <option>Rajesh Jha</option>
-                            <option>Scott Guthrie</option>
-                        </select>
-
+                            required
+                        />
                         </div>
 
-                        <br / >
-
+                        {/* Event Type */}
                         <div style={divStyle}>
-                        <label htmlFor='eventType' style={leftAlign}>Exec Sponsor :  </label>
-                        <input
+                            <label htmlFor='eventType' style = {leftAlign}>Event Type : </label>
+                            <select
+                                className='form-control'
+                                id='event_type'
+                                onChange={this.handleChange}
+                                name='event_type'
+                                value={this.state.event_type}
+                                style={rightAlign}
+                                required
+                            >
+                                <option value=''></option>
+                                <option>Fundraising</option>
+                                <option>Micro-volunteering</option>
+                            </select>
+                        </div>
+
+                        {/* SLT Leader */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style={leftAlign}>SLT Leader :  </label>
+                            <select
+                                className='form-control'
+                                id='slt_leader'
+                                onChange={this.handleChange}
+                                name='slt_leader'
+                                value={this.state.slt_leader}
+                                style={rightAlign}
+                                required
+                            >
+                                <option value=''></option>
+                                <option>Amy Hood</option>
+                                <option>Brad Smith</option>
+                                <option>Chris Caposela</option>
+                                <option>Harry Shum</option>
+                                <option>Jean-Philippe-Courtis</option>
+                                <option>Judson Aithoff</option>
+                                <option>Kathleen Hogan</option>
+                                <option>Kevin Scott</option>
+                                <option>Kurt DelBene</option>
+                                <option>Non SLT Aligned</option>
+                                <option>Peggy Johnson</option>
+                                <option>Phil Spencer</option>
+                                <option>Rajesh Jha</option>
+                                <option>Scott Guthrie</option>
+                            </select>
+                        </div>
+
+                        {/* Exec Sponsor */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style = {leftAlign}>Exec Sponsor : </label>
+                            <input
                             className='form-control'
                             id='exec_sponsor'
                             onChange={this.handleChange}
@@ -484,32 +610,45 @@ class FilterEvents extends React.Component {
                             type='text'
                             value={this.state.exec_sponsor}
                             style={rightAlign}
+                            required
                         />
                         </div>
 
-                        <br />
-                        <button type='submit' className='btn btn-primary' style ={leftAlign}>
-                            Filter
-                        </button>
+                        {/* URL */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style = {leftAlign}>URL : </label>
+                            <input
+                            className='form-control'
+                            id='event_url'
+                            onChange={this.handleChange}
+                            name='event_url'
+                            type='text'
+                            value={this.state.event_url}
+                            style={rightAlign}
+                        />
+                        </div>
 
-                        <button style ={leftAlign} onClick={this.clearFilter}>
-                            Clear
-                        </button>
-                    </div>
-                </form>
+                        {/* Comments */}
+                        <div style={divStyle}>
+                            <label htmlFor='eventType' style = {leftAlign}>Comments : </label>
+                            <input
+                            className='form-control'
+                            id='comments'
+                            onChange={this.handleChange}
+                            name='comments'
+                            type='text'
+                            value={this.state.comments}
+                            style={rightAlignComment}
+                        />
+                        </div>
+                        <br />
+                        <button style={buttonStyle}>Create</button>
+                        <button style={buttonStyle} onClick={this.clearForm}>Clear</button>
+                   </div>
+               </form>
             </div>
         )
     }
 }
 
-// Connect the redux store to react
-function mapStateToProps(state) {
-    return {
-      events : state.events
-    };
-}
-
-export default connect(
-mapStateToProps,
-null
-)(FilterEvents);
+export default withRouter(NewEvent)

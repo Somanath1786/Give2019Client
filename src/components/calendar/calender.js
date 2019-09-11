@@ -7,6 +7,7 @@ import { Calendar , momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import Modal from '@material-ui/core/Modal';
 import { connect } from 'react-redux'
+import * as event from '../../api/events'
 
 
 const localizer = momentLocalizer(moment)
@@ -32,7 +33,8 @@ const modalHeaderStyle ={
 }
 
 // TODO: For this to work it is super important that the css is overridden, figure out a way to do so before deploying
-// I think the fix I have now should work. Let's see
+// I think the fix I have now should wimport { deleteEvent } from './../../api/events';
+
 class GiveCalendar extends React.Component {
     constructor(props) {
         super(props)
@@ -40,6 +42,8 @@ class GiveCalendar extends React.Component {
             showModal : false,
             selectedEvent : ''
         }
+
+        this.deleteEvent = this.deleteEvent.bind(this)
     }
 
     displayModal = event => {
@@ -62,6 +66,13 @@ class GiveCalendar extends React.Component {
         return {
             style: style
         };
+    }
+
+    async deleteEvent(e) {
+        e.preventDefault()
+        await event.deleteEvent(this.state.selectedEvent._id)
+        this.hideModal()
+        window.location.reload()
     }
 
     render() {
@@ -114,7 +125,7 @@ class GiveCalendar extends React.Component {
 
                         <div>
                             <button style={modalHeaderStyle}>Edit Event</button>
-                            <button style={modalHeaderStyle}> Delete Event</button>
+                            <button style={modalHeaderStyle} onClick={this.deleteEvent}> Delete Event</button>
                             <button style={modalHeaderStyle} onClick={this.hideModal}> Close</button>
                         </div>
                     </div>
