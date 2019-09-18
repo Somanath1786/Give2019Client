@@ -2,49 +2,9 @@ import { createStore } from 'redux'
 
 // Set up the initial state of the store
 const initState = {
-    // events : [
-    //     {
-    //         'title' : 'Test 1',
-    //         'start' : new Date(2019, 9, 4, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 4, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 2',
-    //         'start' : new Date(2019, 9, 5, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 5, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 3',
-    //         'start' : new Date(2019, 9, 6, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 6, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 3a',
-    //         'start' : new Date(2019, 9, 6, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 6, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 3b',
-    //         'start' : new Date(2019, 9, 6, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 6, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 3c',
-    //         'start' : new Date(2019, 9, 6, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 6, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 3d',
-    //         'start' : new Date(2019, 9, 6, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 6, 13, 0, 0)
-    //     },
-    //     {
-    //         'title' : 'Test 3e',
-    //         'start' : new Date(2019, 9, 6, 12, 0, 0),
-    //         'end' : new Date(2019, 9, 6, 13, 0, 0)
-    //     }
-    // ]
-    events: []
+    events: [],
+    query : '',
+    isVpal : false
 }
 
 
@@ -53,8 +13,13 @@ export function reducer(state=initState , action=[]) {
     switch(action.type) {
         case 'UPDATE' :
             return Object.assign({}, state, {
-                events : action.eventList
+                events : action.eventList,
+                query : action.query
             })
+        case 'LOGIN' :
+        return Object.assign({}, state, {
+                isVpal : true
+        })
 
         default :
         return state
@@ -62,7 +27,7 @@ export function reducer(state=initState , action=[]) {
 }
 
 
-export function updateEvents(events)
+export function updateEvents(events, query)
 {
     for(let i=0; i < events.length; i++)
     {
@@ -71,7 +36,8 @@ export function updateEvents(events)
     }
     return {
         type : 'UPDATE',
-        eventList : events
+        eventList : events,
+        query : query
     }
 }
 

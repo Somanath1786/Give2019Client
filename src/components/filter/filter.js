@@ -64,7 +64,7 @@ class FilterEvents extends React.Component {
         })
 
         const filteredEvents = await events.getEvents(query)
-        this.props.dispatch(updateEvents(filteredEvents.response))
+        this.props.dispatch(updateEvents(filteredEvents.response, query))
     }
 
     clearFilter (e) {
@@ -76,6 +76,35 @@ class FilterEvents extends React.Component {
             slt_leader : '',
             exec_sponsor : '',
         })
+    }
+
+    componentDidMount()
+    {
+        var searchParams = new URLSearchParams(this.props.query)
+        if (searchParams.has('event_type'))
+        {
+            this.setState({event_type : searchParams.get('event_type')})
+        }
+        if (searchParams.has('building'))
+        {
+            this.setState({building : searchParams.get('building')})
+        }
+        if (searchParams.has('city'))
+        {
+            this.setState({city : searchParams.get('city')})
+        }
+        if (searchParams.has('state'))
+        {
+            this.setState({state : searchParams.get('state')})
+        }
+        if (searchParams.has('slt_leader'))
+        {
+            this.setState({slt_leader : searchParams.get('slt_leader')})
+        }
+        if (searchParams.has('exec_sponsor'))
+        {
+            this.setState({exec_sponsor : searchParams.get('exec_sponsor')})
+        }
     }
 
     render() {
@@ -505,7 +534,8 @@ class FilterEvents extends React.Component {
 // Connect the redux store to react
 function mapStateToProps(state) {
     return {
-      events : state.events
+      events : state.events,
+      query : state.query
     };
 }
 

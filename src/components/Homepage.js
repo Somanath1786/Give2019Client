@@ -8,6 +8,7 @@ import {updateEvents} from '../components/store/store'
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import Navigation from './shared/Navigation';
 import NewEvent from './event/newEvent';
+import NewEventPassword from './event/NewEventPassword';
 
 const divStyle = {
     display : 'flex',
@@ -31,6 +32,7 @@ class Homepage extends React.Component {
     }
 
     render() {
+        console.log(window.localStorage.getItem('Give2019Vpal'))
         return(
             <Router>
                 <div>
@@ -51,9 +53,10 @@ class Homepage extends React.Component {
                     }}/>
 
                     <Route path='/newEvent' exact component = {() => {
-                        return (
+                        return (window.sessionStorage.getItem('Give2019Vpal') === 'true')? (
                            <NewEvent />
-                        )
+                        ) :
+                        (<NewEventPassword />)
                     }}/>
                     <Redirect to='/calendar' />
                 </Switch>
@@ -66,7 +69,7 @@ class Homepage extends React.Component {
 // Connect the redux store to react
 function mapStateToProps(state) {
     return {
-      events : state.events
+      events : state.events,
     };
 }
 

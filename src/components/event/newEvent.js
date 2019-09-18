@@ -83,6 +83,7 @@ class NewEvent extends React.Component{
         e.preventDefault()
         await event.newEvent(this.state)
         this.props.history.push('/calendar')
+        window.location.reload()
     }
 
     // TODO: Clear form is acting as submit and propping the required field - FIX this
